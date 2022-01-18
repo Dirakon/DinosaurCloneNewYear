@@ -10,17 +10,20 @@ public class Hero : MonoBehaviour
     [SerializeField] float speed = 10f, jumpVelocity = 10f;
     [SerializeField] GameObject normalSprite, sneakingSprite, jumpingSprite;
     [SerializeField] AudioSource jumpSound;
+    [SerializeField] WindAnimation windAnimation;
     public bool isJumping = false, isSneaking = false;
 
 
-void Awake(){
-    IsDead = false;
-}    public static bool IsDead = false;
+    void Awake()
+    {
+        IsDead = false;
+    }
+    public static bool IsDead = false;
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
-       rigidbody.velocity= transform.right * speed ;
+        rigidbody.velocity = transform.right * speed;
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -33,11 +36,21 @@ void Awake(){
     }
     float epsilon = 0.000001f;
     float prevVelocity = 0;
-    bool PlayerInstructsToSneak(){
-        return Input.GetAxis("Vertical")<0 ;
+    bool PlayerInstructsToSneak()
+    {
+        return Input.GetAxis("Vertical") < 0;
     }
-    bool PlayerInstructsToJump(){
-        return Input.GetAxis("Vertical")>0f|| Input.GetKey(KeyCode.Space);
+    bool PlayerInstructsToJump()
+    {
+        return Input.GetAxis("Vertical") > 0f || Input.GetKey(KeyCode.Space);
+    }
+    void WindOn()
+    {
+        windAnimation.gameObject.SetActive(true);
+    }
+    void WindOff()
+    {
+        windAnimation.gameObject.SetActive(false);
     }
     void SneakOn()
     {
@@ -64,14 +77,16 @@ void Awake(){
 
         jumpSound.Play();
 
+        WindOff();
+
         normalSprite.SetActive(false);
         jumpingSprite.SetActive(true);
     }
     void JumpOff()
     {
-
         isJumping = false;
 
+        WindOn();
 
         jumpingSprite.SetActive(false);
         normalSprite.SetActive(true);
@@ -98,6 +113,6 @@ void Awake(){
                 SneakOn();
             }
         }
-        rigidbody.velocity= new Vector2(speed,rigidbody.velocity.y);
+        rigidbody.velocity = new Vector2(speed, rigidbody.velocity.y);
     }
 }
